@@ -1,0 +1,46 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+annotations:
+  method: Docker build
+metadata:
+  labels:
+    app: golang-http
+  name: golang-http
+spec:
+  replicas: 1
+  selector:
+    app: golang-http
+    deploymentconfig: golang-http
+    name: golang-http
+  template:
+    metadata:
+      labels:
+        name: golang-http
+        app: golang-http
+        deploymentconfig: golang-http
+    spec:
+      containers:
+        - image: bashayralabdullah/golang-http:v1.0
+          name: golang-http
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: golang-http
+  labels:
+    app: golang-http
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: golang-http
+    deploymentconfig: golang-http
+    name: golang-http
+  type: ClusterIP
